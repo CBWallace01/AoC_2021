@@ -24,65 +24,179 @@ def part_a():
 
 
 def part_b():
-    # VT: Very Top, TL: Top Left, TR: Top Right, MI: Middle, BL: Bottom Left, BR: Bottom Right, VB: Very Bottom
-    start_domains = {'a': ['VT', 'TL', 'TR', 'MI', 'BL', 'BR', 'VB'],
-                     'b': ['VT', 'TL', 'TR', 'MI', 'BL', 'BR', 'VB'],
-                     'c': ['VT', 'TL', 'TR', 'MI', 'BL', 'BR', 'VB'],
-                     'd': ['VT', 'TL', 'TR', 'MI', 'BL', 'BR', 'VB'],
-                     'e': ['VT', 'TL', 'TR', 'MI', 'BL', 'BR', 'VB'],
-                     'f': ['VT', 'TL', 'TR', 'MI', 'BL', 'BR', 'VB'],
-                     'g': ['VT', 'TL', 'TR', 'MI', 'BL', 'BR', 'VB']}
-
-    def validate_domain(domain):
-        for key in domain.keys():
-            if len(domain[key]) > 1:
-                return False
-        return True
-
+    running_total = 0
     def remove(domain, key, pos):
         try:
             domain[key].remove(pos)
         except ValueError:
             pass
 
+    def build_converter(domain):
+        inverted_domain = {}
+        for k, v in domain.items():
+            inverted_domain[v[0]] = k
+        converter = {"".join(sorted(inverted_domain['VT'] +
+                                    inverted_domain['TL'] +
+                                    inverted_domain['TR'] +
+                                    inverted_domain['BL'] +
+                                    inverted_domain['BR'] +
+                                    inverted_domain['VB'])): '0',
+                     "".join(sorted(inverted_domain['TR'] +
+                                    inverted_domain['BR'])): '1',
+                     "".join(sorted(inverted_domain['VT'] +
+                                    inverted_domain['TR'] +
+                                    inverted_domain['MI'] +
+                                    inverted_domain['BL'] +
+                                    inverted_domain['VB'])): '2',
+                     "".join(sorted(inverted_domain['VT'] +
+                                    inverted_domain['TR'] +
+                                    inverted_domain['MI'] +
+                                    inverted_domain['BR'] +
+                                    inverted_domain['VB'])): '3',
+                     "".join(sorted(inverted_domain['TL'] +
+                                    inverted_domain['TR'] +
+                                    inverted_domain['MI'] +
+                                    inverted_domain['BR'])): '4',
+                     "".join(sorted(inverted_domain['VT'] +
+                                    inverted_domain['TL'] +
+                                    inverted_domain['MI'] +
+                                    inverted_domain['BR'] +
+                                    inverted_domain['VB'])): '5',
+                     "".join(sorted(inverted_domain['VT'] +
+                                    inverted_domain['TL'] +
+                                    inverted_domain['MI'] +
+                                    inverted_domain['BL'] +
+                                    inverted_domain['BR'] +
+                                    inverted_domain['VB'])): '6',
+                     "".join(sorted(inverted_domain['VT'] +
+                                    inverted_domain['TR'] +
+                                    inverted_domain['BR'])): '7',
+                     "".join(sorted(inverted_domain['VT'] +
+                                    inverted_domain['TL'] +
+                                    inverted_domain['TR'] +
+                                    inverted_domain['MI'] +
+                                    inverted_domain['BL'] +
+                                    inverted_domain['BR'] +
+                                    inverted_domain['VB'])): '8',
+                     "".join(sorted(inverted_domain['VT'] +
+                                    inverted_domain['TL'] +
+                                    inverted_domain['TR'] +
+                                    inverted_domain['MI'] +
+                                    inverted_domain['BR'] +
+                                    inverted_domain['VB'])): '9'}
+        return converter
+
     for display in displays:
-        curr_domain = start_domains.copy()
         samples = display[0].split(' ')
-        idx = 0
-        while idx < len(samples):  # not validate_domain(curr_domain):
-            curr = samples[idx]
-            # 8 - No usable information here or if all letters are solved
-            if len(curr) == 7 or sum([len(curr_domain[x]) for x in curr]) > len(curr):
-                pass
-            # 1
+        nums = {'0': [], '1': [], '2': [], '3': [], '4': [], '5': [], '6': [], '7': [], '8': ['abcdefg'], '9': []}
+        for sample in samples:
+            curr = "".join(sorted(sample))
+            if len(curr) == 7:
+                continue
             elif len(curr) == 2:
-                for letter in curr:
-                    remove(curr_domain, letter, 'VT')
-                    remove(curr_domain, letter, 'TL')
-                    remove(curr_domain, letter, 'BL')
-                    remove(curr_domain, letter, 'MI')
-                    remove(curr_domain, letter, 'VB')
-            # 7
+                nums['1'].append(curr)
             elif len(curr) == 3:
-                for letter in curr:
-                    remove(curr_domain, letter, 'TL')
-                    remove(curr_domain, letter, 'BL')
-                    remove(curr_domain, letter, 'MI')
-                    remove(curr_domain, letter, 'VB')
-            # 4
+                nums['7'].append(curr)
             elif len(curr) == 4:
-                for letter in curr:
-                    remove(curr_domain, letter, 'VT')
-                    remove(curr_domain, letter, 'BL')
-                    remove(curr_domain, letter, 'VB')
-            # 2 / 3 / 5
+                nums['4'].append(curr)
             elif len(curr) == 5:
-                pass
-            # 0 / 6 / 9
+                nums['2'].append(curr)
+                nums['3'].append(curr)
+                nums['5'].append(curr)
             elif len(curr) == 6:
-                pass
-            idx += 1
-        debug = True
+                nums['0'].append(curr)
+                nums['6'].append(curr)
+                nums['9'].append(curr)
+        domain = {'a': ['VT', 'TL', 'TR', 'MI', 'BL', 'BR', 'VB'],
+                  'b': ['VT', 'TL', 'TR', 'MI', 'BL', 'BR', 'VB'],
+                  'c': ['VT', 'TL', 'TR', 'MI', 'BL', 'BR', 'VB'],
+                  'd': ['VT', 'TL', 'TR', 'MI', 'BL', 'BR', 'VB'],
+                  'e': ['VT', 'TL', 'TR', 'MI', 'BL', 'BR', 'VB'],
+                  'f': ['VT', 'TL', 'TR', 'MI', 'BL', 'BR', 'VB'],
+                  'g': ['VT', 'TL', 'TR', 'MI', 'BL', 'BR', 'VB']}
+        for letter in 'abcdefg':
+            tot = 0
+            for option in samples:
+                if letter in option:
+                    tot += 1
+            if tot == 4:
+                remove(domain, letter, 'VT')
+                remove(domain, letter, 'TL')
+                remove(domain, letter, 'TR')
+                remove(domain, letter, 'MI')
+                remove(domain, letter, 'BR')
+                remove(domain, letter, 'VB')
+                for other in 'abcdefg':
+                    if other == letter:
+                        continue
+                    remove(domain, other, 'BL')
+            elif tot == 6:
+                remove(domain, letter, 'VT')
+                remove(domain, letter, 'TR')
+                remove(domain, letter, 'MI')
+                remove(domain, letter, 'BL')
+                remove(domain, letter, 'BR')
+                remove(domain, letter, 'VB')
+                for other in 'abcdefg':
+                    if other == letter:
+                        continue
+                    remove(domain, other, 'TL')
+            elif tot == 9:
+                remove(domain, letter, 'VT')
+                remove(domain, letter, 'TR')
+                remove(domain, letter, 'TL')
+                remove(domain, letter, 'MI')
+                remove(domain, letter, 'BL')
+                remove(domain, letter, 'VB')
+                for other in 'abcdefg':
+                    if other == letter:
+                        continue
+                    remove(domain, other, 'BR')
+        for letter in nums['1'][0]:
+            remove(domain, letter, 'VT')
+            remove(domain, letter, 'TL')
+            remove(domain, letter, 'MI')
+            remove(domain, letter, 'BL')
+            remove(domain, letter, 'VB')
+        for letter in nums['4'][0]:
+            remove(domain, letter, 'VT')
+            remove(domain, letter, 'BL')
+            remove(domain, letter, 'VB')
+        for letter in nums['7'][0]:
+            remove(domain, letter, 'TL')
+            remove(domain, letter, 'MI')
+            remove(domain, letter, 'BL')
+            remove(domain, letter, 'VB')
+            if letter not in nums['1'][0]:
+                remove(domain, letter, 'TR')
+                remove(domain, letter, 'BR')
+                for other in 'abcdefg':
+                    if other == letter:
+                        continue
+                    remove(domain, other, 'VT')
+        for poss in nums['9']:
+            extras = [x for x in poss if x not in nums['4'][0] + [y for y in domain if 'VT' in domain[y]][0]]
+            if len(extras) == 1:
+                remove(domain, extras[0], 'VT')
+                remove(domain, extras[0], 'TL')
+                remove(domain, extras[0], 'TR')
+                remove(domain, extras[0], 'MI')
+                remove(domain, extras[0], 'BL')
+                remove(domain, extras[0], 'BR')
+                for other in 'abcdefg':
+                    if other == extras[0]:
+                        continue
+                    remove(domain, other, 'VB')
+                break
+        for key in domain:
+            if len(domain[key]) == 1:
+                for other in 'abcdefg':
+                    if other == key:
+                        continue
+                    remove(domain, other, domain[key][0])
+        digit_converter = build_converter(domain)
+        running_total += int("".join([digit_converter["".join(sorted(x))] for x in display[1].split(' ')]))
+    return running_total
 
 
 if __name__ == "__main__":
